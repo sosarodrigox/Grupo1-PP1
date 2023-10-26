@@ -1,5 +1,100 @@
 import streamlit as st
 import pandas as pd
+import pickle
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+
+# Carga el modelo desde el archivo serializado:
+with open("modelo_logistico.pkl", "rb") as modelo:
+    modelo_logistico = pickle.load(modelo)
+
+# Carga el escalador desde el archivo serializado:
+with open("escalador.pkl", "rb") as escalador:
+    scaler = pickle.load(escalador)
+
+
+# Función para predecir el rendimiento corporal:
+def clase_predict(
+    edad,
+    genero,
+    alto_m,
+    peso_kg,
+    grasa_corporal,
+    imc,
+    diastolica,
+    sistolica,
+    fuerza_agarre,
+    sentarse_inclinarse,
+    cant_abdominales,
+    salto_largo,
+    scaler: StandardScaler = scaler,
+    model: LogisticRegression = modelo_logistico,
+):
+    # Crear un DataFrame con los valores de las variables independientes
+    datos_entrada = pd.DataFrame(
+        {
+            "edad": [edad],
+            "genero": [genero],
+            "alto_m": [alto_m],
+            "peso_kg": [peso_kg],
+            "grasa_corporal_%": [grasa_corporal],
+            "IMC": [imc],
+            "diastolica": [diastolica],
+            "sistolica": [sistolica],
+            "fuerza_agarre": [fuerza_agarre],
+            "sentarse_inclinarse_m": [sentarse_inclinarse],
+            "cant_abdominales": [cant_abdominales],
+            "salto_largo_m_": [salto_largo],
+        }
+    )
+
+    # Columnas a escalar (todas excepto 'genero')
+    columnas_a_escalar = [
+        "edad",
+        "alto_m",
+        "peso_kg",
+        "grasa_corporal_%",
+        "IMC",
+        "diastolica",
+        "sistolica",
+        "fuerza_agarre",
+        "sentarse_inclinarse_m",
+        "cant_abdominales",
+        "salto_largo_m_",
+    ]
+
+    # Escalar las columnas seleccionadas utilizando el mismo scaler
+    datos_entrada[columnas_a_escalar] = scaler.transform(
+        datos_entrada[columnas_a_escalar]
+    )
+
+    # Hacer la predicción
+    prediccion_clase = model.predict(datos_entrada)
+
+    # return prediccion_clase
+    return prediccion_clase[0]
+
+
+# Prueba de la función: Ejemplo de uso (Segundo valor del dataset):
+prediccion = clase_predict(
+    edad=25,
+    genero=1,
+    alto_m=1.65,
+    peso_kg=55.8,
+    grasa_corporal=15.7,
+    imc=20.49,
+    diastolica=77,
+    sistolica=126,
+    fuerza_agarre=36.4,
+    sentarse_inclinarse=0.163,
+    cant_abdominales=53,
+    salto_largo=2.29,
+    scaler=scaler,
+)
+
+# Debería predecir la clase 0
+print(f"La clase predicha es: {prediccion}")
 
 # Título
 html_title = """
@@ -14,21 +109,22 @@ html_subtitle = """
 
 st.markdown(html_subtitle, unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
+st.subheader("Ingrese datos de la persona:")
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("Ingrese datos:")
-    edad = st.text_input("Edad:")
-    genero = st.text_input("Género:")
-    alto_m = st.text_input("Altura (m):")
+    genero = st.selectbox("Género:", ("Masculino", "Femenino"))
+    edad = st.slider("Edad:", 0, 110)
+    alto_m = st.slider("Altura (m):", 0.0, 2.20)
     peso_kg = st.text_input("Peso (kg):")
     grasa_corporal = st.text_input("Grasa corporal (%):")
     IMC = st.text_input("IMC:")
 with col2:
-    st.subheader(" ")
     diastolica = st.text_input("Presión diastólica:")
     sistolica = st.text_input("Presión sistólica:")
     fuerza_agarre = st.text_input("Fuerza de agarre:")
     sentarse_inclinarse_m = st.text_input("Sentarse e inclinarse (m):")
-    cant_abdominales = st.text_input("Cantidad de abdominales:")
+    cant_abdominales = st.slider("Cantidad de abdominales:", 0, 70)
     salto_largo_m = st.text_input("Salto largo (m):")
+with col3:
+    st.markdown("Resultados:")
