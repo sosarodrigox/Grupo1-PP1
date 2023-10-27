@@ -87,8 +87,14 @@ def clase_predict(
     # Hacer la predicción
     prediccion_clase = model.predict(datos_entrada)
 
-    # return prediccion_clase
-    return prediccion_clase[0]
+    if prediccion_clase[0] == 0:
+        return "A"
+    elif prediccion_clase[0] == 1:
+        return "B"
+    elif prediccion_clase[0] == 2:
+        return "C"
+    else:
+        return "D"
 
 
 # # Prueba de la función: Ejemplo de uso (Segundo valor del dataset):
@@ -126,6 +132,8 @@ st.markdown(html_subtitle, unsafe_allow_html=True)
 
 st.subheader("Ingrese datos de la persona:")
 col1, col2, col3 = st.columns(3)
+imc = 0.00
+prediccion = ""
 
 with col1:
     genero = st.selectbox("Género:", ("Masculino", "Femenino"))
@@ -133,19 +141,18 @@ with col1:
     alto_m = st.slider("Altura (m):", 0.00, 2.20)
     peso_kg = st.text_input("Peso (kg):")
     grasa_corporal = st.text_input("Grasa corporal (%):")
-    imc = st.text_input("IMC:")
-with col2:
     diastolica = st.text_input("Presión diastólica:")
+with col2:
     sistolica = st.text_input("Presión sistólica:")
     fuerza_agarre = st.text_input("Fuerza de agarre:")
     sentarse_inclinarse_m = st.text_input("Sentarse e inclinarse (m):")
     cant_abdominales = st.slider("Cantidad de abdominales:", 0, 70)
     salto_largo_m = st.text_input("Salto largo (m):")
-with col3:
-    st.markdown("Resultados:")
 
-    # Agregar un botón para realizar la predicción
-    if st.button("Predecir"):
+    st.write("Realiza la evaluación:")
+    # Botón para realizar la predicción
+    if st.button("Predecir clase", use_container_width=True, type="primary"):
+        imc = round(float(peso_kg) / (float(alto_m) ** 2), 2)
         # Usar la función de predicción
         prediccion = clase_predict(
             edad,
@@ -166,5 +173,11 @@ with col3:
             modelo_logistico,
         )
 
-        # Mostrar la predicción en la aplicación de Streamlit
-        st.write(f"La clase predicha es: {prediccion}")
+with col3:
+    st.markdown("Resultados:")
+
+    # Muestra el IMC:
+    st.write(f"El IMC es: {imc}")
+
+    # Mostrar la predicción en la aplicación de Streamlit
+    st.write(f"La clase predicha es: {prediccion}")
