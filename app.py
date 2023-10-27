@@ -4,7 +4,6 @@ import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 
-
 # Carga el modelo desde el archivo serializado:
 with open("modelo_logistico.pkl", "rb") as modelo:
     modelo_logistico = pickle.load(modelo)
@@ -131,9 +130,11 @@ html_subtitle = """
 st.markdown(html_subtitle, unsafe_allow_html=True)
 
 st.subheader("Ingrese datos de la persona:")
+
 col1, col2, col3 = st.columns(3)
 imc = 0.00
 prediccion = ""
+diferencia = 0.00
 
 with col1:
     genero = st.selectbox("Género:", ("Masculino", "Femenino"))
@@ -153,6 +154,7 @@ with col2:
     # Botón para realizar la predicción
     if st.button("Predecir clase", use_container_width=True, type="primary"):
         imc = round(float(peso_kg) / (float(alto_m) ** 2), 2)
+        diferencia = round(float(imc) - float(grasa_corporal), 2)
         # Usar la función de predicción
         prediccion = clase_predict(
             edad,
@@ -174,10 +176,9 @@ with col2:
         )
 
 with col3:
-    st.markdown("Resultados:")
-
-    # Muestra el IMC:
-    st.write(f"El IMC es: {imc}")
-
-    # Mostrar la predicción en la aplicación de Streamlit
-    st.write(f"La clase predicha es: {prediccion}")
+    st.subheader("Resultados:")
+    st.metric(label=" % Grasa Corporal:", value=grasa_corporal)
+    st.divider()
+    st.metric(label="IMC:", value=imc, delta=diferencia, delta_color="normal")
+    st.divider()
+    st.metric(label="CLASE:", value=prediccion)
