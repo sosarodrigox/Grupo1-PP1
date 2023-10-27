@@ -30,21 +30,6 @@ def clase_predict(
     scaler: StandardScaler = scaler,
     model: LogisticRegression = modelo_logistico,
 ):
-    print(
-        # Imprimir los valores ingresados por el usuario:
-        f"Edad: {edad}\n"
-        f"Género: {genero}\n"
-        f"Altura (m): {alto_m}\n"
-        f"Peso (kg): {peso_kg}\n"
-        f"Grasa corporal (%): {grasa_corporal}\n"
-        f"IMC: {imc}\n"
-        f"Presión diastólica: {diastolica}\n"
-        f"Presión sistólica: {sistolica}\n"
-        f"Fuerza de agarre: {fuerza_agarre}\n"
-        f"Sentarse e inclinarse (m): {sentarse_inclinarse}\n"
-        f"Cantidad de abdominales: {cant_abdominales}\n"
-        f"Salto largo (m): {salto_largo}\n"
-    )
     # Crear un DataFrame con los valores de las variables independientes
     datos_entrada = pd.DataFrame(
         {
@@ -95,26 +80,6 @@ def clase_predict(
     else:
         return "D"
 
-
-# # Prueba de la función: Ejemplo de uso (Segundo valor del dataset):
-# prediccion = clase_predict(
-#     edad=25,
-#     genero=1,
-#     alto_m=1.65,
-#     peso_kg=55.8,
-#     grasa_corporal=15.7,
-#     imc=20.49,
-#     diastolica=77,
-#     sistolica=126,
-#     fuerza_agarre=36.4,
-#     sentarse_inclinarse=0.163,
-#     cant_abdominales=53,
-#     salto_largo=2.29,
-#     scaler=scaler,
-# )
-
-# # Debería predecir la clase 0
-# print(f"La clase predicha es: {prediccion}")
 
 # Título
 html_title = """
@@ -182,3 +147,21 @@ with col3:
     st.metric(label="IMC:", value=imc, delta=diferencia, delta_color="normal")
     st.divider()
     st.metric(label="CLASE:", value=prediccion)
+
+
+# # Prueba de la función: Ejemplo de uso (Segundo valor del dataset):
+# prediccion = clase_predict(
+#     edad=25,
+#     genero=1,
+#     alto_m=1.65,
+#     peso_kg=55.8,
+#     grasa_corporal=15.7,
+#     imc=20.49,
+#     diastolica=77,
+#     sistolica=126,
+#     fuerza_agarre=36.4,
+#     sentarse_inclinarse=0.163,
+#     cant_abdominales=53,
+#     salto_largo=2.29,
+#     scaler=scaler,
+# )
