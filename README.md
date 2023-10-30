@@ -11,4 +11,5 @@
 
 ### Recursos:
 - Trello: https://trello.com/w/ispcgrupo1
-- Streamlit: Para correr la app ejecutar el comando "streamlit run app.py" (Desde carpeta raiz)
+- Web app: https://bodyperformance.streamlit.app/
+- Streamlit (Local): Para correr la app ejecutar el comando "streamlit run app.py" (Desde carpeta raiz)
